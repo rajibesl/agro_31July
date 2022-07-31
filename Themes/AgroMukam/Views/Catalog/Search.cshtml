@@ -1,0 +1,84 @@
+﻿@model Nop.Web.Models.Catalog.SearchModel
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.Search").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-search-page");
+}
+
+<div class="page search-page pt-2">
+
+    <div class="page-body container-fluid">
+
+        <div class="search-container">
+            <div class="left-panel as-sidebar">
+                <div id="categories"></div>
+                @* attributes *@
+                <div id="colors"></div>
+                <div id="net-contents"></div>
+                <div id="vendors"></div>
+                <div id="manufacturers"></div>
+                @* spec attributes *@
+                <div id="brands"></div>
+                <div id="colours"></div>
+                <div id="country-of-origin"></div>
+                <div id="features"></div>
+                <div id="application"></div>
+                <div id="maturity"></div>
+                <div id="output-per-hour"></div>
+                <div id="product-packaging"></div>
+                <div id="packaging"></div>
+                <div id="packaging-type"></div>
+                <div id="storage-condition"></div>
+                <div id="price"></div>
+            </div>
+
+            <div class="right-panel as-content">
+                <div id="stats"></div>
+                <div id="hits"></div>
+                <div id="pagination"></div>
+            </div>
+        </div>
+
+        <div class="as-filter-toggler d-lg-none">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <button class="btn btn-sm bg-light-green text-white rounded-pill shadow">
+                    <i class="fas fa-filter"></i>
+                    Filters
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!--<div class="page search-page">
+    <div class="p-2 text-center">
+        <h3> Search (Algolia) </h3>
+        <hr />
+    </div>
+    <div class="page-body">
+
+        <div class="search-container">
+            <div class="left-panel">
+                <div id="categories"></div>
+                <div id="brands"></div>
+                <div id="price"></div>
+            </div>
+            <div class="right-panel">-->
+                @*<div id="searchbox"></div>*@
+                <!--<div id="stats"></div>
+                <div id="hits"></div>
+                <div id="pagination"></div>
+            </div>
+        </div>
+
+    </div>
+</div>-->
+
+<script 
+        asp-location="Footer" 
+        src="/Themes/AgroMukam/Content/js/as-global.js?v=@DateTime.UtcNow.Millisecond"></script>

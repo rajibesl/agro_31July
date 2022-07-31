@@ -1,0 +1,32 @@
+﻿@model IList<VendorModel>
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.Vendors").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-vendor-list-page");
+}
+<div class="page vendor-list-page">
+    <div class="page-title">
+        <h1>@T("Vendors.List")</h1>
+    </div>
+    <div class="page-body">
+        <div class="vendor-grid">
+            <div class="item-grid row no-gutters">
+                @foreach (var item in Model)
+                {
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4 p-1">
+                    <div class="card-banner overlay-gradient cursor-pointer"
+                         style="min-height: 105px; background-image: url('@item.PictureModel.ImageUrl'); background-position: center; background-size: contain; background-repeat: no-repeat;"
+                         onclick="setLocation('@Url.RouteUrl("Vendor", new { SeName = item.SeName })')">
+                        <div class="card-img-overlay text-white d-flex justify-content-center align-items-center text-center">
+                            <h6 class="card-title text-white">@item.SystemName</h6>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

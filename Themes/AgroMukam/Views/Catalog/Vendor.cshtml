@@ -1,0 +1,183 @@
+﻿@model VendorModel
+@using Nop.Core.Domain.Customers
+@using Nop.Core.Domain.Seo
+@using Nop.Services.Catalog
+@using Nop.Services.Customers
+@using Nop.Web.Factories
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject ICustomerService _customerService
+@inject IProductService _productService
+@inject IProductModelFactory _productModelFactory
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(Model.SystemName);
+    //meta
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    Html.AppendPageCssClassParts("html-vendor-page");
+
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var vendorUrl = Url.RouteUrl("Vendor", new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        Html.AddCanonicalUrlParts(vendorUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    var customers = await _customerService.GetAllCustomersAsync(vendorId: Model.Id);
+    var customerId = customers?.FirstOrDefault()?.Id ?? 0;
+    var joinDate = customers?.FirstOrDefault()?.CreatedOnUtc ?? DateTime.Now;
+
+    IList<CustomerRole> customerRoles = new List<CustomerRole>();
+    if (customers.Any())
+        customerRoles = await _customerService.GetCustomerRolesAsync(customers.FirstOrDefault());
+    var isVerified = false;
+    var showInfo = false;
+    var chattingEnabled = false;
+    if (customerRoles.Any())
+    {
+        isVerified = customerRoles.FirstOrDefault(x => x.Name == "Verified Vendor") != null;
+        showInfo = customerRoles.FirstOrDefault(x => x.Name == "Info Visible") != null;
+        chattingEnabled = customerRoles.FirstOrDefault(x => x.Name == "Chatting Enabled") != null;
+    }
+}
+<input type="hidden" value="@Model.SystemName" id="CurrentVendorName" />
+
+<style>
+
+    .page-vendord-store {
+        min-height: 650px;
+    }
+
+    .vendor-store-header {
+        background: url("/Themes/AgroMukam/Content/images/home_agro_section_bg2.jpg");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+    }
+
+        .vendor-store-header .card {
+            max-width: 650px;
+        }
+
+    .vendor-logo {
+        width: 65px;
+    }
+
+    /* .btn-product-classification {
+        background-color: rgba(105, 164, 31, .2) !important;
+    }*/
+
+</style>
+
+<div class="page page-vendord-store">
+
+    @* store header *@
+    <div class="vendor-store-header py-4">
+        <div class="container-lg">
+            <div class="card">
+                <div class="card-body py-2">
+                    <div class="d-flex flex-row">
+                        <div class="d-flex align-items-center pr-4">
+                            @if (showInfo)
+                            {
+                                var title = Model.SystemName;
+                                var altText = Model.SystemName;
+                                <img src="/Themes/AgroMukam/Content/images/icons8-user-64.png"
+                                     alt="@altText" title="@title"
+                                     class="vendor-logo" />
+                            }
+                        </div>
+                        <div class="d-flex flex-fill flex-column justify-content-center">
+                            <h5 class="text-muted">
+                                <span>@Model.SystemName </span>
+                            </h5>
+                            @if (isVerified)
+                            {
+                                <span class="text-light-green"> <i class="fas fa-check-circle"></i> Verified </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted"> <i class="fas fa-eye-slash"></i> Unverified </span>
+                            }
+                        </div>
+                        @*contact vendor*@
+                        @if (chattingEnabled)
+                        {
+                            <div class="d-flex flex-column justify-content-center align-items-center pr-2" onclick="contactVendor()">
+                                <img src="/Themes/AgroMukam/Content/images/icons8-chat-64.png"
+                                     alt="Chat with @Model.SystemName"
+                                     width="45"
+                                     height="45">
+                                <span class="text-muted-x">Chat Now</span>
+                            </div>
+
+                            <script asp-location="Footer">
+                            function contactVendor() {
+                                launchChatWithVendor(JSON.parse('@customerId'), '@Model.SystemName');
+                            }
+                            </script>
+                        }
+                        <div class="d-flex flex-column justify-content-center align-items-center pl-2">
+                            <img src="/Themes/AgroMukam/Content/images/icons8-new-store-80.png"
+                                 alt="Chat with @Model.SystemName"
+                                 width="45"
+                                 height="45">
+                            <span class="text-muted-x">Follow</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Contents *@
+    <div class="page-body container-fluid">
+
+        <div class="search-container">
+            <div class="left-panel as-sidebar">
+                <div id="categories"></div>
+                @* attributes *@
+                <div id="colors"></div>
+                <div id="net-contents"></div>
+                <div id="manufacturers"></div>
+                @* spec attributes *@
+                <div id="brands"></div>
+                <div id="colours"></div>
+                <div id="country-of-origin"></div>
+                <div id="features"></div>
+                <div id="application"></div>
+                <div id="maturity"></div>
+                <div id="output-per-hour"></div>
+                <div id="product-packaging"></div>
+                <div id="packaging"></div>
+                <div id="packaging-type"></div>
+                <div id="storage-condition"></div>
+                <div id="price"></div>
+            </div>
+
+            <div class="right-panel as-content">
+                <div id="stats" class="pt-3"></div>
+                <div id="hits"></div>
+                <div id="pagination"></div>
+            </div>
+        </div>
+
+        <div class="as-filter-toggler d-lg-none">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <button class="btn btn-sm bg-light-green text-white rounded-pill shadow">
+                    <i class="fas fa-filter"></i>
+                    Filters
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script asp-location="Footer"
+        src="/Themes/AgroMukam/Content/js/as-vendor.js?v=@DateTime.UtcNow.Millisecond"></script>
